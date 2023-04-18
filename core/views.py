@@ -33,6 +33,7 @@ def add_movie(request):
 
         movie = Movie(name=name, desc=desc, year=year, img=img)
         movie.save()
+        return redirect('/')
         
 
     return render(request, 'add_movie.html')
@@ -40,11 +41,17 @@ def add_movie(request):
 
 def update(request, id):
     movie = Movie.objects.get(id=id)
-    form = MovieForm(request.POST or None, request.FILES, instance=movie)
-    if form.is_valid():
-        form.save()
-        return redirect('/')
-    return render(request,'edit.html',{'form':form,'movie':movie})
+    # form = MovieForm(request.POST or None, request.FILES, instance=movie)
+    # if form.is_valid():
+    #     form.save()
+    #     return redirect('/')
+    form=MovieForm(instance=movie)
+    if request.method=='POST':
+        form=MovieForm(request.POST, request.FILES,instance=movie)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    return render(request,'edit.html',{'form':form})
 
 
 def delete(request,id):
